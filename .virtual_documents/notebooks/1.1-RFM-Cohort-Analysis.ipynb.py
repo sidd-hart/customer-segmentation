@@ -288,6 +288,96 @@ plt.title('Average quantity by monthly cohorts')
 plt.show()
 
 
+current_date = rfm_train['InvoiceDate'].max().date()
+
+
+rfm_train['Purchase_Date'] = rfm_train.InvoiceDate.dt.date
+
+
+recency = rfm_train.groupby('CustomerID')['Purchase_Date'].max().reset_index()
+
+
+recency
+
+
+recency['Current_Date'] = current_date
+
+
+recency
+
+
+## Compute the number of days since last purchase
+recency['Recency'] = recency['Purchase_Date'].apply(lambda x: (current_date - x).days)
+
+
+recency.head()
+
+
+recency.drop(['Purchase_Date', 'Current_Date'], axis=1, inplace=True)
+
+
+frequency = rfm_train.groupby('CustomerID')['InvoiceNo'].nunique().reset_index().rename(columns={'InvoiceNo': 'Frequency'})
+
+
+frequency.head()
+
+
+rfm_train['Total_cost'] = rfm_train['Quantity'] * rfm_train['UnitPrice']
+
+
+monetary = rfm_train.groupby('CustomerID').Total_cost.sum().reset_index().rename(columns={'Total_cost': 'Monetary'})
+
+
+monetary.head()
+
+
+temp_ = recency.merge(frequency, on='CustomerID')
+rfm_table = temp_.merge(monetary, on='CustomerID')
+
+
+rfm_table.set_index('CustomerID', inplace=True)
+rfm_table.head()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
