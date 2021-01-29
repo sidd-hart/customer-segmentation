@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import plotly.graph_objs as go
+import plotly.figure_factory as ff
 import datetime as dt
 import os
 import time
@@ -182,40 +183,109 @@ cohort['CohortIndex'] = years_diff * 12 + months_diff + 1
 cohort.head()
 
 
+grouping = cohort.groupby(['CohortMonth', 'CohortIndex'])
 
 
+cohort_data = grouping['CustomerID'].apply(pd.Series.nunique).reset_index()
 
 
+cohort_data
 
 
+cohort_counts = cohort_data.pivot(index='CohortMonth', 
+                                  columns='CohortIndex', 
+                                  values='CustomerID')
 
 
+cohort_counts
 
 
+cohort_sizes = cohort_counts.iloc[:, 0]
+cohort_sizes
 
 
+retention = cohort_counts.divide(cohort_sizes, axis=0) * 100
 
 
+retention
 
 
+month_list = ["Dec '10", "Jan '11", "Feb '11", "Mar '11", "Apr '11",\
+              "May '11", "Jun '11", "Jul '11", "Aug '11", "Sep '11", \
+              "Oct '11", "Nov '11", "Dec '11"]
 
 
+px.imshow(
+    img=retention,
+    zmin=0.0,
+    title='Retention by monthly cohorts',
+    y = month_list
+).show()
 
 
+sns.heatmap(data=retention, 
+            annot=True, 
+            fmt='.1f', 
+            linewidth=0.2, 
+            yticklabels=month_list)
+plt.show()
 
 
+grouping = cohort.groupby(['CohortMonth', 'CohortIndex'])
+
+cohort_data = grouping['UnitPrice'].mean()
 
 
+cohort_data
 
 
+cohort_data = cohort_data.reset_index()
 
 
+average_price = cohort_data.pivot(index='CohortMonth', 
+                                  columns='CohortIndex', 
+                                  values='UnitPrice')
 
 
+average_price.round(1)
 
 
+average_price.index = average_price.index.date
 
 
+sns.heatmap(data=average_price, 
+            annot=True, 
+            fmt='.1f', 
+            linewidth=0.2, 
+            yticklabels=month_list)
+plt.title('Average spend by monthly cohorts')
+plt.show()
+
+
+cohort_data = grouping['Quantity'].mean()
+cohort_data
+
+
+cohort_data = cohort_data.reset_index()
+
+
+cohort_data
+
+
+# Create a pivot 
+average_quantity = cohort_data.pivot(index='CohortMonth', columns='CohortIndex', values='Quantity')
+
+
+average_quantity.round(2)
+
+
+sns.heatmap(data=average_quantity, 
+            annot=True, 
+            fmt='.1f', 
+            linewidth=0.2, 
+            yticklabels=month_list)
+plt.title('Average quantity by monthly cohorts')
+plt.show()
 
 
 
