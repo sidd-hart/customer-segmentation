@@ -15,6 +15,11 @@ import os
 import time
 
 
+import lifetimes.plotting as lp
+import lifetimes.utils as lu
+import lifetimes.fitters as lf
+
+
 plt.style.use('dark_background')
 mpl.rcParams['figure.figsize'] = (12, 6)
 
@@ -57,31 +62,33 @@ df['CustomerID'].nunique()
 df.sample(5)
 
 
+data = lu.summary_data_from_transaction_data(df, 
+                                             'CustomerID', 
+                                             'InvoiceDate', monetary_value_col='Sales', 
+                                             observation_period_end='2011-12-9'                                           
+                                            )
 
 
+data.head(10)
 
 
+data.shape
 
 
+data['frequency'].plot(kind='hist', bins=50);
 
 
+print(data['frequency'].describe())
+print(sum(data['frequency'] == 0)/float(len(data)))
 
 
+from lifetimes import BetaGeoFitter
 
 
+bgf = BetaGeoFitter()
 
 
-
-
-
-
-
-
-
-
-
-
-
+bgf = BetaGeoFitter
 
 
 
