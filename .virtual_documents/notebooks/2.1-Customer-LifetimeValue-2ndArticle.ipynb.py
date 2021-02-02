@@ -22,6 +22,9 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import KFold, cross_val_score, train_test_split
 
 
+import xgboost as xgb
+
+
 plt.style.use('dark_background')
 mpl.rcParams['figure.figsize'] = (12, 6)
 
@@ -260,16 +263,21 @@ y = tx_class['LTVCluster']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05, random_state=56)
 
 
+tx_class.sample(10)
 
 
+#XGBoost Multiclassification Model
+ltv_xgb_model = xgb.XGBClassifier(max_depth=5, learning_rate=0.1,objective= 'multi:softprob',n_jobs=-1).fit(X_train, y_train)
 
 
+print('Accuracy of XGB classifier on training set: {:.2f}'
+       .format(ltv_xgb_model.score(X_train, y_train)))
+print('Accuracy of XGB classifier on test set: {:.2f}'
+       .format(ltv_xgb_model.score(X_test[X_train.columns], y_test)))
 
 
-
-
-
-
+y_pred = ltv_xgb_model.predict(X_test)
+print(classification_report(y_test, y_pred))
 
 
 
