@@ -85,10 +85,10 @@ print(sum(data['frequency'] == 0)/float(len(data)))
 from lifetimes import BetaGeoFitter
 
 
-bgf = BetaGeoFitter()
-
-
 bgf = BetaGeoFitter
+
+
+
 
 
 
